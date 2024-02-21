@@ -71,7 +71,6 @@ func SendEvent() error {
 			log.Println(err)
 			return err
 		}
-
 		defer res.Body.Close()
 	} else {
 		//Nothing to send

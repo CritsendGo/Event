@@ -29,13 +29,10 @@ func (b *Buffer) Add(item *Event) {
 func (b *Buffer) Get() *Event {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
-
 	// Check if buffer is empty
 	if len(b.data) == 0 {
-		fmt.Println("Buffer is empty. Returning empty event.")
 		return &Event{}
 	}
-
 	// Get and remove the first item from the buffer
 	item := b.data[0]
 	b.data = b.data[1:]
