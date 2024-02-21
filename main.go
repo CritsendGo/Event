@@ -11,7 +11,7 @@ import (
 )
 
 var eventBuffer *Buffer
-var EventToken string
+var Token string
 
 type Event struct {
 	UserId     int
@@ -30,14 +30,18 @@ func init() {
 }
 
 // AddEvent Used to Add event
-func AddEvent(e *Event) {
+func AddEvent(e *Event) error {
+	if Token == "" {
+		return errors.New("please set the Token var before calling AddEvent()")
+	}
 	eventBuffer.Add(e)
+	return nil
 }
 
 // SendEvent Used to Send event buffer if not empty
 func SendEvent() error {
-	if EventToken == "" {
-		return errors.New("please set the EventToken var before calling SendEvent()")
+	if Token == "" {
+		return errors.New("please set the Token var before calling SendEvent()")
 	}
 	var events []*Event
 	for {
@@ -56,7 +60,7 @@ func SendEvent() error {
 		}
 		postUrl := "https://in-event.critsend.io/event/received/"
 		r, err := http.NewRequest("POST", postUrl, bytes.NewBuffer(jsonByte))
-		r.Header = http.Header{"Authorization": []string{EventToken}}
+		r.Header = http.Header{"Authorization": []string{Token}}
 		if err != nil {
 			log.Println(err)
 			return err
