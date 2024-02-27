@@ -78,7 +78,7 @@ func (b *eventBuffer) Get() (*Event, error) {
 func (b *eventBuffer) readEvent() error {
 	files, err := ioutil.ReadDir("/tmp/")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	for _, file := range files {
 		// @TODO Unmarshal file content and add it to buffer
