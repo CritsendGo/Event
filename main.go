@@ -21,6 +21,7 @@ type Event struct {
 	Id         string
 	Recipient  string
 	Source     string
+	Tags       string
 }
 
 var (
