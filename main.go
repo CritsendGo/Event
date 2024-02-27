@@ -32,6 +32,7 @@ func init() {
 	}
 	// Init Async Reading Folder
 	go asyncRead()
+	go buffer.sendEvent()
 }
 func asyncRead() {
 	for {

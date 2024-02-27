@@ -1,11 +1,13 @@
 package event
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -46,6 +48,9 @@ func (b *Event) saveEvent() (string, error) {
 
 // Add adds an item to the buffer
 func (b *eventBuffer) Add(item *Event) {
+	if Debug == true {
+		fmt.Printf("%+v\n", b)
+	}
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
@@ -88,6 +93,46 @@ func (b *eventBuffer) readEvent() error {
 
 		// @TODO REMOVE
 		fmt.Println(file.Name(), file.IsDir())
+	}
+
+	return nil
+}
+
+func (b *eventBuffer) sendEvent() error {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+	for {
+		var events []*Event
+		for {
+			event, err := b.Get()
+			if err != nil {
+				break
+			} else {
+				events = append(events, event)
+			}
+		}
+		if len(events) > 0 {
+			jsonByte, err := json.Marshal(events)
+			if err != nil {
+				fmt.Printf("Error: %s", err)
+				return err
+			}
+			postUrl := "https://in-event.critsend.io/event/received/"
+			r, err := http.NewRequest("POST", postUrl, bytes.NewBuffer(jsonByte))
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+			client := &http.Client{}
+			res, err := client.Do(r)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+
+			defer res.Body.Close()
+		}
+		time.Sleep(100 * time.Millisecond)
 	}
 
 	return nil
