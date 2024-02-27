@@ -99,10 +99,9 @@ func (b *eventBuffer) readEvent() error {
 }
 
 func (b *eventBuffer) sendEvent() error {
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
 	for {
 		var events []*Event
+
 		for {
 			event, err := b.Get()
 			if err != nil {
