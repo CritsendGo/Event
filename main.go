@@ -23,6 +23,13 @@ type Event struct {
 	Source     string
 }
 
+var (
+	EventBoot      = 1
+	EventVersion   = 2
+	EventNbSuccess = 3
+	EventNbError   = 4
+)
+
 func init() {
 	buffer = &eventBuffer{maxSize: 4096}
 	buffer.data = make([]*Event, 0)
