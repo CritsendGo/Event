@@ -1,5 +1,5 @@
 # MODULE EVENT
-Event module is used on different sub project to normalise and create a secure buffer
+Event module is used on different subproject to normalise and create a secure buffer
 
 ## Installation
 
@@ -8,7 +8,7 @@ Event module is used on different sub project to normalise and create a secure b
 ```bash
 go get github.com/CritsendGo/modEvent
 ```
-Proxy via Nginx to manage htttps
+Proxy via Nginx to manage https
 
 ## Usage
 ```go
