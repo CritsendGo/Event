@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+var Debug = false
 var buffer *eventBuffer
 var Token string
 var BufferTmpFolder string

@@ -19,6 +19,9 @@ type eventBuffer struct {
 
 // SaveEvent Used to Save event in DD on JSON FORMAT
 func (b *Event) saveEvent() (string, error) {
+	if Debug == true {
+		fmt.Printf("%+v\n", b)
+	}
 	fileName := fmt.Sprintln(time.Now().UnixMicro())
 	filePath := BufferTmpFolder + fileName
 	f, err := os.Create(filePath)
