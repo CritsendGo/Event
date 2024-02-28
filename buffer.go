@@ -84,17 +84,25 @@ func (b *eventBuffer) Get() (*Event, error) {
 
 // ReadEvent Used to Read event in DD
 func (b *eventBuffer) readEvent() error {
-	files, err := ioutil.ReadDir("/tmp/")
+	files, err := ioutil.ReadDir(BufferTmpFolder)
 	if err != nil {
 		log.Println(err)
+		return err
 	}
 	for _, file := range files {
-		// @TODO Unmarshal file content and add it to buffer
-
-		// @TODO REMOVE
-		fmt.Println(file.Name(), file.IsDir())
+		bt, err := os.ReadFile(BufferTmpFolder + file.Name()) // just pass the file name
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		var event Event
+		err = json.Unmarshal(bt, &event)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		b.Add(&event)
 	}
-
 	return nil
 }
 

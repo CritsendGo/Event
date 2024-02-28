@@ -2,6 +2,7 @@ package event
 
 import (
 	"errors"
+	"log"
 	"time"
 )
 
@@ -36,7 +37,7 @@ func init() {
 	buffer.data = make([]*Event, 0)
 	err := buffer.readEvent()
 	if err != nil {
-		// @TODO Show error on startup
+		log.Println(err)
 	}
 	// Init Async Reading Folder
 	go asyncRead()
