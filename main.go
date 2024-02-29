@@ -2,6 +2,7 @@ package event
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"time"
 )
@@ -45,6 +46,7 @@ func init() {
 }
 func asyncRead() {
 	for {
+		fmt.Println("BUFFER SIZE ", len(buffer.data))
 		err := buffer.readEvent()
 		if err != nil {
 

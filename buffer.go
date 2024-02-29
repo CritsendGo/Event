@@ -102,6 +102,10 @@ func (b *eventBuffer) readEvent() error {
 			return err
 		}
 		b.Add(&event)
+		err2 := os.Remove(BufferTmpFolder + file.Name())
+		if err2 != nil {
+			log.Println("Error in cleaning file ", BufferTmpFolder+file.Name())
+		}
 	}
 	return nil
 }
