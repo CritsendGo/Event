@@ -24,7 +24,7 @@ func TestAll(t *testing.T) {
 	}
 	rep := addContent(bu, "First")
 	if rep != "First" {
-		t.Fatal("Add One Entry , BUFFER = ", len(bu.data), "FOLDER=", bu.SizeNew(), "ERROR:", err, "CONTENT", rep)
+		t.Fatal("Add One Entry , BUFFER = ", 1, "FOLDER=", bu.SizeNew(), "ERROR:", err, "CONTENT", rep)
 	}
 }
 
