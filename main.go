@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/CritsendGo/modBuffer"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -14,6 +16,9 @@ var Debug = false
 var buffer *modBuffer.CSBuffer
 var Token string
 var ReadFolderInterval = 1 * time.Minute
+var FolderEvent = "/tmp/event/"
+var MaxEventInSend = 256
+var IntervalEventSend = 250 * time.Millisecond
 
 type Event struct {
 	UserId     int
@@ -37,7 +42,7 @@ var (
 func init() {
 	var err error
 	modBuffer.Debug = Debug
-	buffer, err = modBuffer.NewBuffer("", 1024)
+	buffer, err = modBuffer.NewBuffer(FolderEvent, 1024)
 	if err != nil {
 		log.Println(err)
 	}
@@ -64,14 +69,24 @@ func AddEvent(e *Event) error {
 func sendEvent() {
 	for {
 		var events []*Event
+		nb := 0
 		for {
-			item, err := buffer.Get()
-			if err != nil {
+			var event Event
+			data, err := buffer.Get()
+			if Debug {
+				fmt.Println(data, err)
+			}
+			if err != nil || nb > MaxEventInSend {
+				break
+			}
+			d, err := json.Marshal(data)
+			err = json.Unmarshal(d, &event)
+			if err != nil || nb > MaxEventInSend {
 				break
 			} else {
-				event := item.(Event)
 				events = append(events, &event)
 			}
+			nb++
 		}
 		if len(events) > 0 {
 			jsonByte, err := json.Marshal(events)
@@ -79,6 +94,9 @@ func sendEvent() {
 				log.Printf("Error: %s", err)
 			}
 			postUrl := "https://in-event.critsend.io/event/received/"
+			if Debug {
+				//fmt.Println(string(jsonByte), err)
+			}
 			r, err := http.NewRequest("POST", postUrl, bytes.NewBuffer(jsonByte))
 			if err != nil {
 				log.Println(err)
@@ -86,13 +104,18 @@ func sendEvent() {
 			}
 			client := &http.Client{}
 			res, err := client.Do(r)
+			resBody, err := ioutil.ReadAll(res.Body)
+			if Debug {
+				fmt.Println(string(resBody))
+				fmt.Println(res)
+			}
 			defer res.Body.Close()
 			if err != nil {
 				log.Println(err)
 
 			}
 		}
-
+		time.Sleep(IntervalEventSend)
 	}
-	time.Sleep(100 * time.Millisecond)
+
 }

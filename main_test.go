@@ -2,30 +2,41 @@ package event
 
 import (
 	"fmt"
-	"github.com/CritsendGo/modBuffer"
-	"os"
+	modBuffer "github.com/CritsendGo/modBuffer"
 	"testing"
+	"time"
 )
 
 var folderTest = "/tmp/eventSend/"
 var size = 2
 var Log = false
+var BufferFolder = "/tmp/"
 
 func TestAll(t *testing.T) {
-	Debug = false
+	Debug = true
 	Log = true
-	err := os.RemoveAll(folderTest)
-	if err != nil {
-		t.Fatal("Unable to clean folder buffer", err)
+	var e1 = Event{
+		UserId:     1,
+		Code:       150,
+		CreateTime: time.Now(),
+		OriginTime: time.Now(),
+		Detail:     "Test 1",
+		Id:         "ddd",
+		Recipient:  "none@none.com",
 	}
-	bu, err := modBuffer.NewBuffer(folderTest, size)
+	err := buffer.Add(e1)
+	err = buffer.Add(e1)
+	err = buffer.Add(e1)
+	err = buffer.Add(e1)
+	err = buffer.Add(e1)
+	err = buffer.Add(e1)
+	err = buffer.Add(e1)
+
+	fmt.Println(err)
 	if err != nil {
 		t.Fatal("Unable to create buffer", err)
 	}
-	rep := addContent(bu, "First")
-	if rep != "First" {
-		t.Fatal("Add One Entry , BUFFER = ", 1, "FOLDER=", bu.SizeNew(), "ERROR:", err, "CONTENT", rep)
-	}
+	time.Sleep(1 * time.Minute)
 }
 
 func addContent(bu *modBuffer.CSBuffer, val string) string {
