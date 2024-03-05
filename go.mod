@@ -1,4 +1,4 @@
-module EVENT
+module github.com/CritsendGo/modEvent
 
 go 1.21
 
